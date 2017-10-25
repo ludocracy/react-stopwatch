@@ -6,34 +6,40 @@ class Stopwatch extends Component {
     super(props);
 
     this._onReset = this._onReset.bind(this);
-    this._onStart = this._onStart.bind(this);
-    this._onPause = this._onPause.bind(this);
+    this._onStartStop = this._onStartStop.bind(this);
 
     this.state = {
-      interval: null,
-      timer: 0
+      timer: 0,
+      interval: null
     }
   }
 
   _onReset(e) {
-    this._onPause();
+    this._clearInterval();
     this.setState({
       timer: 0
     })
   }
 
-  _onStart(e) {
-    this.setState({
-      interval: setInterval(() => {
+  _onStartStop(e) {
+    if(this.state.interval) {
+      this._clearInterval();
+    } else {
+      this.setState({
+        interval: setInterval(() => {
           this.setState({
             timer: this.state.timer + 1
           });
         }, 1000)
-    })
+      });
+    }
   }
 
-  _onPause(e) {
+  _clearInterval() {
     clearInterval(this.state.interval);
+    this.setState({
+      interval: null
+    });
   }
 
   render() {
@@ -42,8 +48,7 @@ class Stopwatch extends Component {
         <h1>{this.state.timer}</h1>
         <div className="controls">
           <button onClick={this._onReset}>Reset</button>
-          <button onClick={this._onStart}>Start</button>
-          <button onClick={this._onPause}>Pause</button>
+          <button onClick={this._onStartStop}>{this.state.interval ? 'Stop' : 'Start'}</button>
         </div>
       </div>
     );
